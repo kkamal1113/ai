@@ -363,3 +363,72 @@ public class Main {
         }
     }
 }
+
+
+7. BFS
+
+import java.util.*;
+
+class Graph {
+    Map<Integer, List<Integer>> adj;
+
+    public Graph() {
+        adj = new HashMap<>();
+    }
+
+    public void addEdge(int u, int v, boolean dir) {
+        adj.computeIfAbsent(u, k -> new ArrayList<>()).add(v);
+        if (!dir) {
+            adj.computeIfAbsent(v, k -> new ArrayList<>()).add(u);
+        }
+    }
+
+    public void printAdj() {
+        for (Map.Entry<Integer, List<Integer>> entry : adj.entrySet()) {
+            System.out.print(entry.getKey() + " -> ");
+            for (int nbr : entry.getValue()) {
+                System.out.print(nbr + ", ");
+            }
+            System.out.println();
+        }
+    }
+
+    public void bfs(int src, Map<Integer, Boolean> vis) {
+        Queue<Integer> q = new LinkedList<>();
+        q.add(src);
+        vis.put(src, true);
+
+        while (!q.isEmpty()) {
+            int fNode = q.poll();
+            System.out.print(fNode + " ");
+
+            for (int nbr : adj.getOrDefault(fNode, Collections.emptyList())) {
+                if (!vis.getOrDefault(nbr, false)) {
+                    q.add(nbr);
+                    vis.put(nbr, true);
+                }
+            }
+        }
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Graph g = new Graph();
+
+        g.addEdge(0, 1, true);
+        g.addEdge(1, 2, true);
+        g.addEdge(2, 3, true);
+        g.addEdge(3, 0, true);
+
+        g.printAdj();
+
+        Map<Integer, Boolean> vis = new HashMap<>();
+        g.bfs(0, vis);
+        for (int ch = 0; ch <= 3; ch++) {
+            if (!vis.getOrDefault(ch, false)) {
+                g.bfs(ch, vis);
+            }
+        }
+    }
+}
